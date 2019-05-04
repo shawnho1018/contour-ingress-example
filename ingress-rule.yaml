@@ -1,0 +1,55 @@
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata: 
+  name: root-blog
+  namespace: default 
+spec: 
+  virtualhost:
+    fqdn: test.syspks.com
+ #tls:
+ #secretName: containersteve-com
+  routes: 
+  - match: /
+    delegate:
+      name: grey 
+      namespace: default
+---
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata:
+  name: grey
+  namespace: default
+spec:
+  routes:
+  - match: /
+    services:
+    - name: nginx-svc-v1
+      port: 80
+      weight: 50
+    - name: nginx-svc-v2
+      port: 80
+      weight: 50
+---
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata: 
+  name: blue
+  namespace: default
+spec: 
+  routes: 
+  - match: /
+    services: 
+    - name: nginx-svc-v1
+      port: 80
+---
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata:
+  name: green
+  namespace: default
+spec:
+  routes:
+  - match: /
+    services:
+    - name: nginx-svc-v2
+      port: 80
